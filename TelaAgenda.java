@@ -1,15 +1,29 @@
-import javax.swing.*;
-import javax.swing.colorchooser.ColorSelectionModel;
-import java.awt.*;
-import java.util.concurrent.BlockingQueue;
-import java.awt.event.*;
-import java.io.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.BufferedWriter;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
-import javax.swing.table.AbstractTableModel;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class TelaAgenda extends JPanel {
@@ -125,6 +139,33 @@ public class TelaAgenda extends JPanel {
 		return dados;
 	}
 
+	protected void deletaLinha(String id){
+
+		File arquivo = new File("dados.txt");       
+        try{
+            FileReader fr = new FileReader(arquivo);
+            BufferedReader br = new BufferedReader(fr);
+			//Arraylist
+			ArrayList<String> salva = new ArrayList();
+             //enquanto houver mais linha
+            while (linha != null) {
+                String linha = br.readLine();
+				String[] textoSeparado = linha.split(";");
+                if(textoSeparado[0].equals(id) == false){
+					salva.add(linha);
+                }
+                        
+            }
+            br.close();
+            fr.close();
+
+
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+
+	}
+
     protected void leTabela(DefaultTableModel model){
         File arquivo = new File("dados.txt");       
         try{
@@ -161,7 +202,18 @@ public class TelaAgenda extends JPanel {
             }
             br.close();
             fr.close();
-
+			//apaga arquivo
+			FileWriter fw = new FileWriter(arquivo, true);
+			fw.close();
+			//Reescreve no arquivo
+			FileWriter fw2 = new FileWriter(arquivo);
+            BufferedWriter bw = new BufferedWriter(fw2);
+			for(int i=0; i<salva.size(); i++){
+				bw.write(salva.get(i));
+				bw.newLine();
+			}
+			bw.close();
+			fw2.close();
 			
         }catch(IOException ex){
             ex.printStackTrace();
